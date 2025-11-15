@@ -115,7 +115,7 @@
 
         .hero-content p {
             font-size: 1.8em;
-            color: #aaa;
+            color: #3c3c3c;
             margin-top: 15px;
             font-weight: 300;
         }
@@ -197,7 +197,7 @@
             background: rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 16px rgba(0,0,0,0.3);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #cccccc;
+            color: #434343;
         }
 
         .header-card {
@@ -235,7 +235,7 @@
             border-radius: 8px;
         }
         .stat-title {
-            color: #aaaaaa;
+            color: #5b5b5b;
             font-size: 1.02em;
             margin-bottom: 10px;
         }
@@ -505,6 +505,26 @@
                     <span class="badge yellow">Human Review</span>
                     <span class="badge red">Auto-Deny</span>
                 </div>
+                <div class="workflow-box" style="margin-top: 20px;">
+    <div style="padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h3 style="color: white; margin-bottom: 15px;">📊 Help Improve AI Accuracy</h3>
+        <p style="color: #f0f4ff; margin-bottom: 20px;">Was this decision correct? Your feedback trains the system!</p>
+        
+        <button onclick="submitFeedback('CURRENT_REQUEST_ID', 'CORRECT')" 
+                style="background: #10b981; color: white; padding: 12px 24px; border: none; border-radius: 8px; margin-right: 12px; cursor: pointer; font-size: 16px; font-weight: 600;">
+            ✅ AI Was Correct
+        </button>
+        
+        <button onclick="submitFeedback('CURRENT_REQUEST_ID', 'INCORRECT_APPROVE')" 
+                style="background: #ef4444; color: white; padding: 12px 24px; border: none; border-radius: 8px; margin-right: 12px; cursor: pointer; font-size: 16px; font-weight: 600;">
+            ❌ Should Be APPROVED
+        </button>
+        
+        <button onclick="submitFeedback('CURRENT_REQUEST_ID', 'INCORRECT_DENY')" 
+                style="background: #f59e0b; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600;">
+            ⚠️ Should Be DENIED
+        </button>
+    </div>
             </div>
             <div class="double-row">
                 <div class="pale-card">
@@ -524,10 +544,10 @@
                             <label for="patientId">Patient ID</label>
                             <select id="patientId" required>
                                 <option value="1001">1001 - John Smith (Demo)</option>
-                                <option value="P-1002345">P-1002345 - John D. Doe (❌ Will Deny)</option>
-                                <option value="P-1003456">P-1003456 - Jane A. Smith (❌ Will Deny)</option>
-                                <option value="P-1004567">P-1004567 - Emily R. White (❌ Will Deny)</option>
-                                <option value="P-1005000">P-1005000 - Michael Chen (✅ Will Approve)</option>
+                                <option value="P-1002345">P-1002345 - John D. Doe </option>
+                                <option value="P-1003456">P-1003456 - Jane A. Smith </option>
+                                <option value="P-1004567">P-1004567 - Emily R. White </option>
+                                <option value="P-1005000">P-1005000 - Michael Chen</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -569,7 +589,44 @@
         reviewQueue: 0,
         processingTimes: []
     };
+    ////////////////
+    // Add this function to your existing <script> section
+function submitFeedback(requestId, feedbackType) {
+    const feedbackData = {
+        request_id: requestId,
+        feedback_type: feedbackType,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Show loading state
+    const button = event.target;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+    
+    // Replace with your actual n8n feedback webhook URL
+    fetch('http://localhost:5678/webhook-test/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(feedbackData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('✅ Thank you! Your feedback helps improve the AI system.');
+        button.style.background = '#6b7280';
+        button.textContent = '✓ Feedback Submitted';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Error submitting feedback. Please try again.');
+        button.disabled = false;
+        button.textContent = originalText;
+    });
+}
 
+    /////////////////
     // Function to update dashboard stats
     function updateDashboardStats(decision, processingTime) {
         dashboardStats.totalRequests++;
