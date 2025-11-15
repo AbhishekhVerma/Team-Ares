@@ -115,7 +115,7 @@
 
         .hero-content p {
             font-size: 1.8em;
-            color: #3c3c3c;
+            color: #cac0c0;
             margin-top: 15px;
             font-weight: 300;
         }
@@ -589,44 +589,7 @@
         reviewQueue: 0,
         processingTimes: []
     };
-    ////////////////
-    // Add this function to your existing <script> section
-function submitFeedback(requestId, feedbackType) {
-    const feedbackData = {
-        request_id: requestId,
-        feedback_type: feedbackType,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Show loading state
-    const button = event.target;
-    const originalText = button.textContent;
-    button.disabled = true;
-    button.textContent = 'Submitting...';
-    
-    // Replace with your actual n8n feedback webhook URL
-    fetch('http://localhost:5678/webhook-test/feedback', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(feedbackData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('✅ Thank you! Your feedback helps improve the AI system.');
-        button.style.background = '#6b7280';
-        button.textContent = '✓ Feedback Submitted';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Error submitting feedback. Please try again.');
-        button.disabled = false;
-        button.textContent = originalText;
-    });
-}
-
-    /////////////////
+   
     // Function to update dashboard stats
     function updateDashboardStats(decision, processingTime) {
         dashboardStats.totalRequests++;
@@ -747,7 +710,12 @@ function submitFeedback(requestId, feedbackType) {
                     <h3 style="color: ${decisionClass === 'success' ? '#28a745' : decisionClass === 'error' ? '#dc3545' : '#ffc107'}; margin-bottom: 15px;">
                         Decision: ${decisionText}
                     </h3>
-                    <p><strong>Confidence:</strong> ${confidence}%</p>
+                    <p>
+    <strong>Confidence:</strong>
+    <span style="color: #28a745; font-weight: 700;">${confidence}%</span>
+</p>
+
+
                     
                     ${criteriaMet.length > 0 ? `
                         <div style="margin-top: 15px; background: #d4edda; padding: 12px; border-radius: 6px;">
@@ -812,6 +780,44 @@ function submitFeedback(requestId, feedbackType) {
             `;
         }
     });
+     ////////////////
+    // Add this function to your existing <script> section
+function submitFeedback(requestId, feedbackType) {
+    const feedbackData = {
+        request_id: requestId,
+        feedback_type: feedbackType,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Show loading state
+    const button = event.target;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+    
+    // Replace with your actual n8n feedback webhook URL
+    fetch('http://localhost:5678/webhook-test/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(feedbackData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('✅ Thank you! Your feedback helps improve the AI system.');
+        button.style.background = '#6b7280';
+        button.textContent = '✓ Feedback Submitted';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Thank you!');
+        button.disabled = false;
+        button.textContent = originalText;
+    });
+}
+
+    /////////////////
 </script>
 
 </body>
