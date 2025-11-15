@@ -4,57 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PolicyPath - AI Prior Authorization</title>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* HERO/HOMEPAGE STYLES */
+        .hero-container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top left, #2c3e50 0%, #0a0e1a 60%, #4a1c00 100%);
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .hero-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image_f94d46.png');
+            background-repeat: repeat;
+            opacity: 0.05;
+            z-index: 2;
+        }
+
+        .hero-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 60px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .hero-logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #eee;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-nav-links {
+            list-style: none;
+        }
+
+        .hero-nav-links li {
+            display: inline-block;
+            margin-left: 35px;
+        }
+
+        .hero-nav-links a {
+            text-decoration: none;
+            color: #aaa;
+            font-size: 1em;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .hero-nav-links a:hover,
+        .hero-nav-links a.active {
+            color: #fff;
+            border-bottom: 2px solid #f77f00;
+            padding-bottom: 5px;
+        }
+
+        .hero-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: heroFadeIn 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            z-index: 3;
+        }
+
+        @keyframes heroFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 6.5em;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -2px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hero-content p {
+            font-size: 1.8em;
+            color: #aaa;
+            margin-top: 15px;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            margin-top: 40px;
+        }
+
+        .hero-btn {
+            padding: 18px 40px;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #f77f00;
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: #fa9c33;
+        }
+
+        /* DASHBOARD STYLES */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f7fa;
             min-height: 100vh;
-            padding: 20px;
         }
+
+        #dashboard {
+            background: radial-gradient(circle at top left, #2c3e50 0%, #0a0e1a 60%, #4a1c00 100%);
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        #dashboard::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image_f94d46.png');
+            background-repeat: repeat;
+            opacity: 0.05;
+            z-index: 2;
+        }
+        
         .container {
             max-width: 1100px;
             margin: 0 auto;
-            padding-top: 20px;
+            position: relative;
+            z-index: 3;
+            background: transparent;
+            padding: 0;
         }
+
         .demo-bar {
-            background: #fff8e1;
-            color: #ad7c1a;
+            background: rgba(255, 248, 225, 0.1);
+            color: #eebf60;
             padding: 14px 22px;
             border-radius: 6px;
             margin-bottom: 14px;
             font-size: 1.05em;
+            border: 1px solid rgba(255, 248, 225, 0.2);
         }
+
+        .header-card, .stat-card, .workflow-box, .pale-card, .card {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cccccc;
+        }
+
         .header-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
             padding: 26px 32px;
             margin-bottom: 26px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border-radius: 10px;
+        }
+        .header-card h1, .workflow-title, .pale-card-title {
+            color: #f0f0f0;
         }
         .header-card h1 {
             font-size: 2.3em;
-            color: #232861;
             margin-bottom: 4px;
         }
         .header-card p {
-            color: #777;
+            color: #cccccc;
             font-size: 1.12em;
         }
-        .new-request-btn {
-            background: #246bf3;
-            color: white;
-            font-weight: 600;
-            padding: 13px 26px;
-            font-size: 1.04em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(36,107,243,0.08);
-        }
+
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -62,37 +227,32 @@
             margin-bottom: 18px;
         }
         .stat-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 22px;
             min-width: 125px;
+            border-radius: 8px;
         }
         .stat-title {
-            color: #828a97;
+            color: #aaaaaa;
             font-size: 1.02em;
             margin-bottom: 10px;
-            letter-spacing: 0.04em;
         }
         .stat-value {
             font-weight: 600;
             font-size: 2em;
-            color: #555b8b;
+            color: #f0f0f0;
         }
+
         .workflow-box {
-            background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             padding: 20px;
             margin-bottom: 26px;
         }
         .workflow-title {
             font-weight: 600;
             font-size: 1.25em;
-            color: #232861;
             margin-bottom: 17px;
         }
         .workflow-steps {
@@ -111,11 +271,12 @@
             padding: 10px;
             display: inline-block;
         }
-        .step-icon.blue { background: #e9f2ff; color: #246bf3; }
-        .step-icon.purple { background: #f0ecff; color: #764ba2; }
-        .step-icon.yellow { background: #fff9e5; color: #eebf60; }
-        .step-icon.orange { background: #ffe5d1; color: #ea8733; }
-        .step-icon.green { background: #e4faee; color: #41c397; }
+        .step-icon.blue { background: rgba(36, 107, 243, 0.2); color: #7cb0ff; }
+        .step-icon.purple { background: rgba(118, 75, 162, 0.2); color: #b692dd; }
+        .step-icon.yellow { background: rgba(238, 191, 96, 0.2); color: #ffeb3b; }
+        .step-icon.orange { background: rgba(234, 135, 51, 0.2); color: #ffc107; }
+        .step-icon.green { background: rgba(65, 195, 151, 0.2); color: #81c784; }
+        
         .workflow-badges-row {
             display: flex;
             gap: 14px;
@@ -131,6 +292,7 @@
         .badge.green { background: #51b787; }
         .badge.yellow { background: #eebf60; }
         .badge.red { background: #ea4a53; }
+        
         .double-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -138,7 +300,6 @@
             margin-bottom: 30px;
         }
         .pale-card {
-            background: #eef2f5;
             border-radius: 10px;
             padding: 28px 22px;
             min-height: 110px;
@@ -147,14 +308,13 @@
             font-size: 1.16em;
             font-weight: 600;
             margin-bottom: 15px;
-            color: #232861;
         }
         .pale-card-content {
-            color: #959595;
+            color: #bbbbbb;
             font-size: 1.05em;
             padding-top: 8px;
         }
-        /* ORIGINAL FORM STYLES, slightly adjusted for dashboard consistency */
+        
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -162,37 +322,39 @@
             margin-bottom: 40px;
         }
         .card {
-            background: white;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
         .card h2 {
-            color: #667eea;
+            color: #7cb0ff;
             margin-bottom: 20px;
             font-size: 1.45em;
         }
+        
         .form-group {
             margin-bottom: 20px;
         }
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: #f0f0f0;
             font-weight: 600;
         }
         select, textarea, input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            background: rgba(255, 255, 255, 0.08);
+            color: #f0f0f0;
         }
         select:focus, textarea:focus, input:focus {
             outline: none;
             border-color: #667eea;
         }
+        
         .submit-btn {
             width: 100%;
             padding: 15px;
@@ -254,114 +416,147 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-card">
-            <div>
-                <h1>PolicyPath</h1>
-                <p>Healthcare Prior Authorization Automation Platform</p>
+    <!-- HOMEPAGE -->
+    <div class="hero-container" id="homepage">
+        <nav class="hero-nav">
+            <div class="hero-logo">
+                <img src="logo.png" alt="PolicyPath Icon" style="height: 36px; margin-right: 12px;">
+                PolicyPath
             </div>
-            <button class="new-request-btn">+ New Authorization Request</button>
-        </div>
-        <div class="stats-row">
-            <div class="stat-card">
-                <span class="stat-title">Total Requests</span>
-                <span class="stat-value">1</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-title">Approved</span>
-                <span class="stat-value">0</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-title">Review Queue</span>
-                <span class="stat-value">0</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-title">Avg Processing Time</span>
-                <span class="stat-value">0.00s</span>
-            </div>
-        </div>
-        <div class="workflow-box">
-            <div class="workflow-title">Authorization Workflow Pipeline</div>
-            <div class="workflow-steps">
-                <div class="step">
-                    <div class="step-icon blue">📄</div>
-                    <div>Data Intake</div>
-                </div>
-                <div class="step">
-                    <div class="step-icon purple">🧠</div>
-                    <div>AI Analysis</div>
-                </div>
-                <div class="step">
-                    <div class="step-icon yellow">🔀</div>
-                    <div>Route Decision</div>
-                </div>
-                <div class="step">
-                    <div class="step-icon orange">⏱️</div>
-                    <div>Human Review</div>
-                </div>
-                <div class="step">
-                    <div class="step-icon green">📝</div>
-                    <div>Audit Trail</div>
-                </div>
-            </div>
-            <div class="workflow-badges-row">
-                <span class="badge green">Auto-Approve</span>
-                <span class="badge yellow">Human Review</span>
-                <span class="badge red">Auto-Deny</span>
+            <ul class="hero-nav-links">
+                <li><a href="#" class="active">HOME</a></li>
+                <li><a href="#">FEATURES</a></li>
+                <li><a href="#">ABOUT</a></li>
+                <li><a href="#">CONTACT</a></li>
+            </ul>
+        </nav>
+        <div class="hero-content">
+            <h1>
+                <img src="logo.png" alt="Medicine Bottle Icon" style="height: 80px; vertical-align: middle; margin-right: 20px;">
+                <strong>POLICYPATH</strong>
+            </h1>
+            <p>The Auditable AI Orchestrator for Oncology Care</p>
+            <div class="hero-buttons">
+                <button class="hero-btn btn-primary"
+                    onclick="document.getElementById('homepage').style.display='none';document.getElementById('dashboard').style.display='block';">
+                    OPEN DASHBOARD
+                </button>
             </div>
         </div>
-        <div class="double-row">
-            <div class="pale-card">
-                <div class="pale-card-title">Recent Approvals</div>
-                <div class="pale-card-content">No approved cases yet</div>
-            </div>
-            <div class="pale-card">
-                <div class="pale-card-title">Pending Reviews</div>
-                <div class="pale-card-content">No pending reviews</div>
-            </div>
-        </div>
-        <!-- App Form and Results Section (unchanged JS logic) -->
-        <div class="main-content">
-            <div class="card">
-                <h2>🚀 Submit PA Request</h2>
-                <form id="paForm">
-                    <div class="form-group">
-    <label for="patientId">Patient ID</label>
-    <select id="patientId" required>
-        <option value="1001">1001 - John Smith (Demo)</option>
-        <option value="P-1002345">P-1002345 - John D. Doe</option>
-        <option value="P-1003456">P-1003456 - Jane A. Smith</option>
-        <option value="P-1004567">P-1004567 - Emily R. White</option>
-        <option value="P-1005000">P-1005000 - Michael Chen</option>
-    </select>
-</div>
+    </div>
 
-                    <div class="form-group">
-                        <label for="priority">Priority</label>
-                        <select id="priority">
-                            <option value="Standard">Standard</option>
-                            <option value="Urgent">Urgent</option>
-                            <option value="Emergency">Emergency</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="notes">Clinical Notes (Optional)</label>
-                        <textarea id="notes" rows="4" placeholder="Enter any additional clinical context..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="webhookUrl">n8n Webhook URL</label>
-                        <input type="text" id="webhookUrl" value="http://localhost:5678/webhook-test/policypath-submit" />
-                    </div>
-                    <button type="submit" class="submit-btn">🚀 Submit Request</button>
-                </form>
-                <div id="result"></div>
+    <!-- DASHBOARD -->
+    <div id="dashboard" style="display:none;">
+        <div class="container">
+            <div class="demo-bar">
+                <strong>Demo Prototype:</strong>
+                This system is for demonstration purposes only and is not HIPAA compliant in its current state. All data processing occurs over HTTPS with TLS encryption.
             </div>
-            <div class="card">
-                <h2>📊 Live Results</h2>
-                <div id="resultDetails">
-                    <p style="color: #999; text-align: center; padding: 40px;">
-                        Submit a request to see results here
-                    </p>
+            <div class="header-card">
+                <div>
+                    <h1>PolicyPath</h1>
+                    <p>Healthcare Prior Authorization Automation Platform</p>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-title">Total Requests</span>
+                    <span class="stat-value" id="totalRequests">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-title">Approved</span>
+                    <span class="stat-value" id="approvedCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-title">Review Queue</span>
+                    <span class="stat-value" id="reviewQueueCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-title">Avg Processing Time</span>
+                    <span class="stat-value" id="avgTime">0.00s</span>
+                </div>
+            </div>
+            <div class="workflow-box">
+                <div class="workflow-title">Authorization Workflow Pipeline</div>
+                <div class="workflow-steps">
+                    <div class="step">
+                        <div class="step-icon blue">📄</div>
+                        <div>Data Intake</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon purple">🧠</div>
+                        <div>AI Analysis</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon yellow">🔀</div>
+                        <div>Route Decision</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon orange">⏱️</div>
+                        <div>Human Review</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon green">📝</div>
+                        <div>Audit Trail</div>
+                    </div>
+                </div>
+                <div class="workflow-badges-row">
+                    <span class="badge green">Auto-Approve</span>
+                    <span class="badge yellow">Human Review</span>
+                    <span class="badge red">Auto-Deny</span>
+                </div>
+            </div>
+            <div class="double-row">
+                <div class="pale-card">
+                    <div class="pale-card-title">Recent Approvals</div>
+                    <div class="pale-card-content" id="recentApprovals">No approved cases yet</div>
+                </div>
+                <div class="pale-card">
+                    <div class="pale-card-title">Pending Reviews</div>
+                    <div class="pale-card-content" id="pendingReviews">No pending reviews</div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="card">
+                    <h2>🚀 Submit PA Request</h2>
+                    <form id="paForm">
+                        <div class="form-group">
+                            <label for="patientId">Patient ID</label>
+                            <select id="patientId" required>
+                                <option value="1001">1001 - John Smith (Demo)</option>
+                                <option value="P-1002345">P-1002345 - John D. Doe (❌ Will Deny)</option>
+                                <option value="P-1003456">P-1003456 - Jane A. Smith (❌ Will Deny)</option>
+                                <option value="P-1004567">P-1004567 - Emily R. White (❌ Will Deny)</option>
+                                <option value="P-1005000">P-1005000 - Michael Chen (✅ Will Approve)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority">
+                                <option value="Standard">Standard</option>
+                                <option value="Urgent">Urgent</option>
+                                <option value="Emergency">Emergency</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Clinical Notes (Optional)</label>
+                            <textarea id="notes" rows="4" placeholder="Enter any additional clinical context..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="webhookUrl">n8n Webhook URL</label>
+                            <input type="text" id="webhookUrl" value="http://localhost:5678/webhook-test/policypath-submit" />
+                        </div>
+                        <button type="submit" class="submit-btn">🚀 Submit Request</button>
+                    </form>
+                    <div id="result"></div>
+                </div>
+                <div class="card">
+                    <h2>📊 Live Results</h2>
+                    <div id="resultDetails">
+                        <p style="color: #999; text-align: center; padding: 40px;">
+                            Submit a request to see results here
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
