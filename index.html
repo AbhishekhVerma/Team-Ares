@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolicyPath - AI Prior Authorization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        select, textarea, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, textarea:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 PolicyPath</h1>
+            <p>AI-Powered Prior Authorization Platform</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>127</h3>
+                <p>Total Requests</p>
+            </div>
+            <div class="stat-card">
+                <h3>94%</h3>
+                <p>AI Accuracy</p>
+            </div>
+            <div class="stat-card">
+                <h3>2.3s</h3>
+                <p>Avg Decision Time</p>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>🚀 Submit PA Request</h2>
+                
+                <form id="paForm">
+                    <div class="form-group">
+                        <label for="patientId">Patient ID</label>
+                        <select id="patientId" required>
+                            <option value="1001">1001 - John Smith (Demo)</option>
+                            <option value="P-1002345">P-1002345 - John D. Doe</option>
+                            <option value="P-1003456">P-1003456 - Jane A. Smith</option>
+                            <option value="P-1004567">P-1004567 - Emily R. White</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="priority">Priority</label>
+                        <select id="priority">
+                            <option value="Standard">Standard</option>
+                            <option value="Urgent">Urgent</option>
+                            <option value="Emergency">Emergency</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Clinical Notes (Optional)</label>
+                        <textarea id="notes" rows="4" placeholder="Enter any additional clinical context..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="webhookUrl">n8n Webhook URL</label>
+                        <input type="text" id="webhookUrl" value="http://localhost:5678/webhook-test/policypath-submit" />
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">🚀 Submit Request</button>
+                </form>
+                
+                <div id="result"></div>
+            </div>
+            
+            <div class="card">
+                <h2>📊 Live Results</h2>
+                <div id="resultDetails">
+                    <p style="color: #999; text-align: center; padding: 40px;">
+                        Submit a request to see results here
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   <script>
+    document.getElementById('paForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const patientId = document.getElementById('patientId').value;
+        const priority = document.getElementById('priority').value;
+        const notes = document.getElementById('notes').value;
+        const webhookUrl = document.getElementById('webhookUrl').value;
+        
+        const resultDiv = document.getElementById('result');
+        const resultDetails = document.getElementById('resultDetails');
+        
+        // Show loading
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'loading';
+        resultDiv.innerHTML = '<div class="spinner"></div><p>Processing request through AI engine...</p>';
+        resultDetails.innerHTML = '<div class="spinner"></div><p>Analyzing clinical data...</p>';
+        
+        // Prepare payload
+        const payload = {
+            patient_id: patientId,
+            priority: priority,
+            notes: notes,
+            timestamp: new Date().toISOString()
+        };
+        
+        try {
+            const startTime = Date.now();
+            
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            const processingTime = ((Date.now() - startTime) / 1000).toFixed(2);
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Extract actual data from n8n response
+                const decision = data.decision || data.ai_analysis?.preliminary_assessment || "UNKNOWN";
+                const confidence = data.confidence || data.ai_analysis?.confidence_score || 0;
+                const reasoning = data.ai_analysis?.reasoning || "AI analysis in progress";
+                
+                // Determine decision class
+                let decisionClass = 'success';
+                let decisionIcon = '✅';
+                let decisionText = 'APPROVED';
+                
+                if (decision.toLowerCase().includes('denied')) {
+                    decisionClass = 'error';
+                    decisionIcon = '❌';
+                    decisionText = 'DENIED';
+                } else if (decision.toLowerCase().includes('review') || confidence < 90) {
+                    decisionClass = 'warning';
+                    decisionIcon = '⚠️';
+                    decisionText = 'NEEDS REVIEW';
+                } else if (decision.toLowerCase().includes('approved')) {
+                    decisionClass = 'success';
+                    decisionIcon = '✅';
+                    decisionText = 'APPROVED';
+                }
+                
+                // Show result summary
+                resultDiv.className = decisionClass;
+                resultDiv.innerHTML = `
+                    <h3>${decisionIcon} Request ${decisionText}</h3>
+                    <p><strong>Patient ID:</strong> ${patientId}</p>
+                    <p><strong>Processing Time:</strong> ${processingTime} seconds</p>
+                    <p><strong>Confidence Score:</strong> ${confidence}%</p>
+                    <p><strong>Request ID:</strong> ${data.request_id || new Date().getTime()}_${patientId}</p>
+                `;
+                
+                // Show detailed results with ACTUAL AI data
+                resultDetails.innerHTML = `
+                    <h3 style="color: ${decisionClass === 'success' ? '#28a745' : decisionClass === 'error' ? '#dc3545' : '#ffc107'}; margin-bottom: 15px;">
+                        Decision: ${decisionText}
+                    </h3>
+                    <p><strong>Confidence:</strong> ${confidence}%</p>
+                    
+                    ${data.ai_analysis ? `
+                        <div style="margin-top: 15px;">
+                            <p><strong>Diagnosis Code:</strong> ${data.ai_analysis.diagnosis_code || 'N/A'}</p>
+                            <p><strong>Genomic Markers:</strong> ${data.ai_analysis.genomic_markers_extracted || 'N/A'}</p>
+                            <p><strong>Prior Treatments:</strong> ${data.ai_analysis.prior_treatments_list || 'N/A'}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <p><strong>AI Reasoning:</strong></p>
+                    <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                        ${reasoning}
+                    </p>
+                    
+                    <hr style="margin: 20px 0;">
+                    <h4>Raw n8n Response:</h4>
+                    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px; max-height: 300px; overflow-y: auto;">${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+        } catch (error) {
+            resultDiv.className = 'error';
+            resultDiv.innerHTML = `
+                <h3>❌ Connection Error</h3>
+                <p>${error.message}</p>
+                <p style="margin-top: 10px;">
+                    <strong>Troubleshooting:</strong><br>
+                    • Make sure n8n is running<br>
+                    • Check the workflow is ACTIVE (toggle switch ON)<br>
+                    • Verify webhook URL: ${document.getElementById('webhookUrl').value}<br>
+                    • Check n8n has "Respond to Webhook" node at the end
+                </p>
+            `;
+            
+            resultDetails.innerHTML = `
+                <p style="color: #999; text-align: center; padding: 40px;">
+                    Error occurred. Please check the connection and try again.
+                </p>
+            `;
+        }
+    });
+</script>
