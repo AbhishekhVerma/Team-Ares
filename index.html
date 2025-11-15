@@ -365,6 +365,51 @@
         </div>
     </div>
     <script>
+    // Dashboard Stats Tracking
+    let dashboardStats = {
+        totalRequests: 0,
+        approved: 0,
+        reviewQueue: 0,
+        processingTimes: []
+    };
+
+    // Function to update dashboard stats
+    function updateDashboardStats(decision, processingTime) {
+        dashboardStats.totalRequests++;
+        
+        if (decision === 'APPROVED') {
+            dashboardStats.approved++;
+        } else if (decision === 'NEEDS REVIEW' || decision === 'DENIED') {
+            dashboardStats.reviewQueue++;
+        }
+        
+        dashboardStats.processingTimes.push(parseFloat(processingTime));
+        const avgTime = (dashboardStats.processingTimes.reduce((a, b) => a + b, 0) / dashboardStats.processingTimes.length).toFixed(2);
+        
+        document.querySelector('.stats-row .stat-card:nth-child(1) .stat-value').textContent = dashboardStats.totalRequests;
+        document.querySelector('.stats-row .stat-card:nth-child(2) .stat-value').textContent = dashboardStats.approved;
+        document.querySelector('.stats-row .stat-card:nth-child(3) .stat-value').textContent = dashboardStats.reviewQueue;
+        document.querySelector('.stats-row .stat-card:nth-child(4) .stat-value').textContent = avgTime + 's';
+        
+        // Add animation
+        document.querySelectorAll('.stat-value').forEach(el => {
+            el.style.transform = 'scale(1.15)';
+            el.style.color = '#246bf3';
+            setTimeout(() => {
+                el.style.transform = 'scale(1)';
+                el.style.color = '#555b8b';
+            }, 400);
+        });
+    }
+
+    // Add transitions
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.stat-value').forEach(el => {
+            el.style.transition = 'transform 0.3s ease, color 0.3s ease';
+        });
+    });
+
+    // Form submission handler
     document.getElementById('paForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -376,13 +421,11 @@
         const resultDiv = document.getElementById('result');
         const resultDetails = document.getElementById('resultDetails');
 
-        // Show loading
         resultDiv.style.display = 'block';
         resultDiv.className = 'loading';
         resultDiv.innerHTML = '<div class="spinner"></div><p>Processing request through AI engine...</p>';
         resultDetails.innerHTML = '<div class="spinner"></div><p>Analyzing clinical data...</p>';
 
-        // Prepare payload
         const payload = {
             patient_id: patientId,
             priority: priority,
@@ -406,12 +449,10 @@
             if (response.ok) {
                 let data = await response.json();
                 
-                // Handle if response is an array - take first item
                 if (Array.isArray(data)) {
                     data = data[0];
                 }
 
-                // Extract data - handle nested structure
                 const output = data.output || data;
                 const decision = output.final_decision || output.decision || data.decision || "UNKNOWN";
                 const confidence = output.confidence || data.confidence || 0;
@@ -419,7 +460,6 @@
                 const criteriaMet = output.criteria_met || [];
                 const criteriaMissing = output.criteria_missing || [];
 
-                // Determine decision class
                 let decisionClass = 'success';
                 let decisionIcon = '✅';
                 let decisionText = 'APPROVED';
@@ -438,7 +478,6 @@
                     decisionText = 'APPROVED';
                 }
 
-                // Show result summary
                 resultDiv.className = decisionClass;
                 resultDiv.innerHTML = `
                     <h3>${decisionIcon} Request ${decisionText}</h3>
@@ -447,7 +486,9 @@
                     <p><strong>Confidence Score:</strong> ${confidence}%</p>
                 `;
 
-                // Show detailed results with ACTUAL AI data
+                // UPDATE DASHBOARD STATS
+                updateDashboardStats(decisionText, processingTime);
+
                 resultDetails.innerHTML = `
                     <h3 style="color: ${decisionClass === 'success' ? '#28a745' : decisionClass === 'error' ? '#dc3545' : '#ffc107'}; margin-bottom: 15px;">
                         Decision: ${decisionText}
@@ -518,5 +559,6 @@
         }
     });
 </script>
+
 </body>
 </html>
